@@ -62,4 +62,48 @@ class MMU {
         return ptr;
     }
 
+    handleUse(ptr) {
+        const pages = this.ptrMap.get(ptr);
+        if (!pages) return;
+    
+        for (const page of pages) {
+        if (page.loaded) {
+            // Hit: la página ya está en RAM
+            this.stats.registerHit();
+        } else {
+            // Fallo: la página está en disco, hay que traerla
+            this.stats.registerFault();
+    
+            // Sacarla de memoria virtual
+            this.removeFromVirtual(page);
+    
+            // Cargarla en RAM (con reemplazo si es necesario)
+            this.loadPageToRAM(page);
+        }
+    
+        // Notificar al algoritmo que se accedió esta página
+        this.algorithm.notifyAccess(page);
+        }
+    }
+
+    handleDelete(ptr) {
+        const pages = this.ptrMap.get(ptr);
+        if (!pages) return;
+    
+        for (const page of pages) {
+            this.removePage(page);
+        }
+    
+        // Eliminar ptr del mapa
+        this.ptrMap.delete(ptr);
+    
+        // Encontrar el proceso dueño y quitarle el ptr
+        for (const [pid, process] of this.processes) {
+            if (process.hasPtr(ptr)) {
+                process.removePtr(ptr);
+                break;
+            }
+        }
+    }
+
 }
