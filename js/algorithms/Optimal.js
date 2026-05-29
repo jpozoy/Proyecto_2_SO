@@ -4,11 +4,8 @@ export default class Optimal extends ReplacementAlgorithm {
   constructor(allOperations) {
     super();
     this.allOps = allOperations || [];
-    // proximoUso[i] = siguiente índice donde se usa el mismo ptr
     this.proximoUso = new Array(this.allOps.length).fill(-1);
-
-    // recorrer de atrás para adelante
-    const ultimo = {}; // ptr -> último índice visto
+    const ultimo = {}; 
     for (let i = this.allOps.length - 1; i >= 0; i--) {
       if (this.allOps[i].type === 'use') {
       const ptr = this.allOps[i].ptr;
@@ -20,16 +17,11 @@ export default class Optimal extends ReplacementAlgorithm {
     }
   }
 
-  notifyStep(operationIndex) {
-    this.currentStep = operationIndex;
-  }
-
   selectVictim(loadedPages) {
     let victima = loadedPages[0];
     let usoMasLejano = -1;
 
     for (const page of loadedPages) {
-        // buscar el próximo uso desde currentStep
         let proximoUso = -1;
         let i = this.ultimoIndice(page.ptr);
         while (i !== -1) {
@@ -45,6 +37,10 @@ export default class Optimal extends ReplacementAlgorithm {
     }
     return victima;
   }
+  
+  notifyStep(operationIndex) {
+    this.currentStep = operationIndex;
+  }
 
   ultimoIndice(ptr) {
     for (let i = 0; i < this.allOps.length; i++) {
@@ -52,6 +48,4 @@ export default class Optimal extends ReplacementAlgorithm {
     }
     return -1;
   }
-
-  // notifyAccess / notifyRemove: no-op. OPT no necesita metadata por acceso.
 }
