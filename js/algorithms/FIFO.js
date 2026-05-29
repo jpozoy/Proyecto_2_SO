@@ -1,7 +1,6 @@
 import ReplacementAlgorithm from './ReplacementAlgorithm.js';
 
 export default class FIFO extends ReplacementAlgorithm {
-  /** Víctima = página cargada hace más tiempo (loadedAt más antiguo). */
   selectVictim(loadedPages) {
     let victima = loadedPages[0];
 
@@ -16,5 +15,4 @@ export default class FIFO extends ReplacementAlgorithm {
 
     return victima;
   }
-  // notifyAccess / notifyRemove: no-op. FIFO no reordena en accesos.
 }

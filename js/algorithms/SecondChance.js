@@ -7,7 +7,7 @@ export default class SecondChance extends ReplacementAlgorithm {
   }
 
   selectVictim(loadedPages) {
-    // Robustez: descartar de la cola páginas que ya no estén en RAM.
+    // Descartar de la cola páginas que ya no estén en RAM.
     const loadedSet = new Set(loadedPages);
     this.queue = this.queue.filter(p => loadedSet.has(p));
 
@@ -21,7 +21,7 @@ export default class SecondChance extends ReplacementAlgorithm {
         return page;             // bit 0 -> víctima
       }
     }
-    return this.queue.shift() || loadedPages[0]; // fallback defensivo
+    return this.queue.shift() || loadedPages[0]; 
   }
 
   notifyAccess(page) {
