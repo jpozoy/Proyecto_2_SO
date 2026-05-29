@@ -24,6 +24,7 @@ export default class MMU {
 
     const numPages = Math.max(1, Math.ceil(size / PAGE_SIZE));
     const pages = [];
+    const pinned = new Set();
 
     for (let i = 0; i < numPages; i++) {
       const isLast = i === numPages - 1;
@@ -33,7 +34,8 @@ export default class MMU {
       pages.push(page);
 
       this.stats.registerFault();
-      this._loadToReal(page);
+      this._loadToReal(page, pinned);
+      pinned.add(page);
       this.lastOpResult.set(page.id, 'F');
       this._recordAccess(page);
     }
@@ -49,14 +51,16 @@ export default class MMU {
     const pages = this.ptrMap.get(ptr);
     if (!pages) return; 
 
+    const pinned = new Set(pages); 
+
     for (const page of pages) {
       if (page.loaded) {
-        this.stats.registerHit();         
+        this.stats.registerHit();
         this.lastOpResult.set(page.id, 'H');
       } else {
-        this.stats.registerFault(); 
+        this.stats.registerFault();
         this._removeFromVirtual(page);
-        this._loadToReal(page);
+        this._loadToReal(page, pinned);
         this.lastOpResult.set(page.id, 'F');
       }
       this._recordAccess(page);
