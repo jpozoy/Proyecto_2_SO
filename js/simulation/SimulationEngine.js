@@ -18,10 +18,6 @@ function createAlgorithm(type) {
 }
 
 export default class SimulationEngine {
-  /**
-   * @param {Array<Object>} operations     secuencia de operaciones
-   * @param {string}        algorithmType  'FIFO' | 'SC' | 'LRU' | 'LFU'
-   */
   constructor(operations, algorithmType) {
     this.operations = operations;
     this.algorithmType = (algorithmType || 'FIFO').toUpperCase();
@@ -35,14 +31,14 @@ export default class SimulationEngine {
 
     this.currentStep = 0;
     this.paused = false;
-    this.speed = 150; // ms entre pasos
+    this.speed = 150;
     this._interval = null;
 
-    this.onStepCallback = null;   // (engine) => void  tras cada paso
-    this.onFinishCallback = null; // (engine) => void  al terminar
+    this.onStepCallback = null;
+    this.onFinishCallback = null;
   }
 
-  /** Ejecuta UNA operación en ambas MMU. Retorna false si ya no hay más. */
+  /** Ejecuta una operación en ambas MMU. Retorna false si ya no hay más. */
   step() {
     if (this.isFinished()) return false;
 
